@@ -49,23 +49,12 @@ public_users.get('/isbn/:isbn',async function (req, res) {
 // Get book details based on author
 public_users.get('/author/:author',async function (req, res) {
     try {
-        const author = req.params.author;
-
-        const getBooksByAuthor = new Promise((resolve, reject) => {
-            const bookKeys = Object.keys(books);
-            const matchingBooks = bookKeys
-            .filter(key => books[key].author === author)
-            .map(key => books[key]);
-
-            if (matchingBooks.length > 0) resolve(matchingBooks);
-            else reject("No books found for this author");
-        });
-
-        const matchingBooks = await getBooksByAuthor;
-        return res.status(200).json(matchingBooks);
-    } catch (err) {
-        return res.status(404).json({ message: err });
-    }
+        const author = encodeURIComponent(req.params.author);
+        const response = await axios.get(`${BASE_URL}/author/${author}`);
+        return res.status(200).json(response.data);
+      } catch (err) {
+        return res.status(404).json({ message: "No books found for this author", error: err.message });
+      }
 });
 
 // Get all books based on title
