@@ -60,23 +60,12 @@ public_users.get('/author/:author',async function (req, res) {
 // Get all books based on title
 public_users.get('/title/:title', async function (req, res) {
     try {
-        const title = req.params.title;
-
-        const getBooksByTitle = new Promise((resolve, reject) => {
-            const bookKeys = Object.keys(books);
-            const matchingBooks = bookKeys
-            .filter(key => books[key].title === title)
-            .map(key => books[key]);
-
-            if (matchingBooks.length > 0) resolve(matchingBooks);
-            else reject("No books found for this title");
-        });
-
-        const matchingBooks = await getBooksByTitle;
-        return res.status(200).json(matchingBooks);
-    } catch (err) {
-        return res.status(404).json({ message: err });
-    }
+        const title = encodeURIComponent(req.params.title);
+        const response = await axios.get(`${BASE_URL}/title/${title}`);
+        return res.status(200).json(response.data);
+      } catch (err) {
+        return res.status(404).json({ message: "No books found for this title", error: err.message });
+      }
 });
 
 //  Get book review
