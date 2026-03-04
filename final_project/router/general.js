@@ -37,21 +37,13 @@ public_users.get('/', async function (req, res) {
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',async function (req, res) {
-    try{
+    try {
         const isbn = req.params.isbn;
-        const getBookByISBN = new  Promise((resolve, reject)=>{
-            const book = books[isbn];
-            if(book) resolve(book);
-            else reject("Book not found");
-        });
-
-        const book = await getBookByISBN;
-        return res.status(200).json(book);
-
-    }catch(err){
-        return res.status(404).json({message: err});
-    }
-
+        const response = await axios.get(`http://localhost:5000/isbn/${isbn}`);
+        return res.status(200).json(response.data);
+      } catch (err) {
+        return res.status(404).json({ message: "Book not found", error: err.message });
+      }
  });
   
 // Get book details based on author
